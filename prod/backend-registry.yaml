@@ -3,7 +3,6 @@ apiVersion: image.toolkit.fluxcd.io/v1beta1
 kind: ImageRepository
 metadata:
   name: backend
-  namespace: flux-system
 spec:
   image: elouadiabdelati/cooptation-backend
   interval: 1m0s

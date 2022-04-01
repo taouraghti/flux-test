@@ -3,7 +3,6 @@ kind: PersistentVolume
 apiVersion: v1
 metadata:
   name: postgres-pv
-  namespace: flux-system
   labels:
     type: local
 spec:
@@ -21,11 +20,10 @@ metadata:
   labels:
     app: postgres
   name: postgres-pv-claim
-  namespace: flux-system
 spec:
   storageClassName: manual
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 25Gi
@@ -34,7 +32,6 @@ apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: postgres-deployment
-  namespace: flux-system
 spec:
   template:
     metadata:
@@ -42,38 +39,37 @@ spec:
         app: postgres
     spec:
       containers:
-      - name: postgres
-        image: postgres:14
-        imagePullPolicy: Always
-        env:
-          - name: POSTGRES_USER
-            valueFrom:
-              secretKeyRef:
-                name: app-secret
-                key: POSTGRES_USER
-          - name: POSTGRES_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: app-secret
-                key: POSTGRES_PASSWORD
-          - name: POSTGRES_DB
-            valueFrom:
-              configMapKeyRef:
-                name: app-config
-                key: POSTGRES_DB
-        volumeMounts:
-        - mountPath: /var/lib/postgresql/data
-          name: postgres-pv-claim
+        - name: postgres
+          image: postgres:14
+          imagePullPolicy: Always
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: POSTGRES_DB
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-pv-claim
       volumes:
-      - name: postgres-pv-claim
-        persistentVolumeClaim:
-          claimName: postgres-pv-claim
+        - name: postgres-pv-claim
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: postgres-service
-  namespace: flux-system
 spec:
   type: ClusterIP
   selector:
@@ -82,4 +78,3 @@ spec:
     - protocol: TCP
       port: 5432
       targetPort: 5432
-
