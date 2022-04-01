@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: backend-ingress
+  namespace: flux-system
+  labels:
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/instance: backend
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: 'true'
+    cert-manager.io/issuer: letsencrypt-campus
+spec:
+  tls:
+    - hosts:
+        - cooptation-backend.campus.clusterdiali.me
+      secretName: cooptation-backend.campus.clusterdiali.me-tls
+  rules:
+    - host: cooptation-backend.campus.clusterdiali.me
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-svc
+                port:
+                 number: 80

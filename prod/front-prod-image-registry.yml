@@ -1,0 +1,20 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageRepository
+metadata:
+  name: react
+  namespace: flux-system
+spec:
+  image: elouadiabdelati/cooptation-frontend
+  interval: 1m0s
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImagePolicy
+metadata:
+  name: react
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: react
+  policy:
+    semver:
+      range: '>= 0.0.0'
